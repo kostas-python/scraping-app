@@ -40,8 +40,6 @@ const Home = () => {
       } else {
         setError("Failed to fetch data.");
       }
-    } catch (error) {
-      setError("An error occurred while fetching the data.");
     } finally {
       setLoading(false);
     }
