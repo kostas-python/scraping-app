@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        let { url, page } = req.query;
+        const { url, page } = req.query;  // Use const since it's never reassigned
 
         if (!url || typeof url !== "string") {
             return res.status(400).json({ success: false, error: "A valid URL is required." });
@@ -39,17 +39,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Check if "Next Page" button exists
         const nextPageExists = await pageInstance.$(".pagination a[href*='?page=']");
-        const nextPage = nextPageExists ? Number(page) + 1 : null;
+        const nextPage = nextPageExists ? pageNumber + 1 : null;
 
         console.log("Scraping complete. Total companies scraped:", companies.length);
         await browser.close();
 
         return res.status(200).json({ success: true, data: companies, nextPage });
-    } catch (error: any) {
+    } catch (error: unknown) {  // Fix: Use 'unknown' instead of 'any'
         console.error("Error during scraping:", error);
+
+        // Type assertion for error messages
+        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
         return res.status(500).json({
             success: false,
-            error: `Failed to scrape data. Error: ${error.message}`,
+            error: `Failed to scrape data. Error: ${errorMessage}`,
         });
     }
 }
