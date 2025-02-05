@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const page = await browser.newPage();
 
         // URL is predefined (or you can extract it from the request)
-        const url = `https://www.eop.gr/search/company?keyword=%CE%A5%CE%B4%CE%A1%CE%91%CE%A5%CE%9B%CE%99%CE%9A%CE%9F%CE%99&region=%CF%80%CE%B1%CF%84%CF%81%CE%B1&term_id=11082&parent_region=`;
+        const url = `https://www.eop.gr/search/company?keyword=%CE%A5%CE%94%CE%A1%CE%91%CE%A5%CE%9B%CE%99%CE%9A%CE%9F%CE%99&region=%CF%80%CE%B1%CF%84%CF%81%CE%B1&term_id=11082&parent_region=`;
 
         console.log("Scraping URL:", url);
 
@@ -38,13 +38,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const descriptionElement = article.querySelector(".company--description p");
                 const categoryElement = article.querySelector(".company--category span");
 
+                // Extracting the phone numbers as an array of strings
+                const phoneNumbers = Array.from(phoneElements)
+                    .map(phone => phone.textContent?.trim() || "N/A")
+                    .join(", "); // Joining all phone numbers with commas
+
                 return {
                     companyName: companyNameElement ? companyNameElement.textContent?.trim() || "N/A" : "N/A",
                     website: websiteElement ? websiteElement.getAttribute('href') || "N/A" : "N/A",
                     email: emailElement ? emailElement.textContent?.trim() || "N/A" : "N/A",
-                    phones: Array.from(phoneElements)
-                        .map(phone => phone.textContent?.trim() || "N/A")
-                        .join(", "),
+                    phones: phoneNumbers || "N/A", // Added phone number extraction
                     location: locationElement ? locationElement.getAttribute('href') || "N/A" : "N/A",
                     address: addressElement ? addressElement.textContent?.trim() || "N/A" : "N/A",
                     description: descriptionElement ? descriptionElement.textContent?.trim() || "N/A" : "N/A",

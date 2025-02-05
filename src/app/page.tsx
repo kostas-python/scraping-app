@@ -12,7 +12,7 @@ const Home = () => {
     setError(null);
 
     try {
-      // Send request to the backend API (no query parameters required now)
+      // Send request to the backend API
       const res = await fetch("/api/scrape");
       const data = await res.json();
 
@@ -51,9 +51,9 @@ const Home = () => {
           <tbody>
             {companies.map((company, index) => (
               <tr key={index}>
-                <td>{company.name}</td>
+                <td>{company.companyName}</td>
                 <td>{company.address}</td>
-                <td>{company.phone}</td>
+                <td>{company.phones}</td>
                 <td>{company.email}</td>
                 <td>{company.website}</td>
               </tr>
