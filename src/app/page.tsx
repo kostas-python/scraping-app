@@ -3,9 +3,18 @@
 import { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 
+// Define the company data structure
+interface Company {
+  companyName: string;
+  address: string;
+  phones: string;
+  email: string;
+  website: string;
+}
+
 const Home = () => {
   const [url, setUrl] = useState(""); 
-  const [companies, setCompanies] = useState<any[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);  // Use the specific type
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -51,6 +60,16 @@ const Home = () => {
     }
   };
 
+  const handleReset = () => {
+    // Reset all states to initial values
+    setUrl("");
+    setCompanies([]);
+    setLoading(false);
+    setError(null);
+    setPage(1);
+    setHasMore(false);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100) {
@@ -60,7 +79,7 @@ const Home = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [page, hasMore]);
+  }, [handleNextPage]);
 
   const downloadCSV = () => {
     if (companies.length === 0) return;
@@ -74,13 +93,21 @@ const Home = () => {
   return (
     <div className="p-6 max-w-4xl mt-20  mx-auto">
       <h1 className="text-2xl text-center text-green-600 tracking-wider font-bold mb-4">Company Data Scraper</h1>
-      <input
-        type="text"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        placeholder="Enter URL to scrape"
-        className="w-full text-black p-2 border rounded mb-4"
-      />
+      <div className="flex mb-4">
+        <input
+          type="text"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="Enter URL to scrape"
+          className="w-full text-black p-2 border rounded"
+        />
+        <button
+          onClick={handleReset}
+          className="ml-4 py-2 px-4 bg-red-800 text-white rounded hover:bg-red-700 transition"
+        >
+          Reset
+        </button>
+      </div>
 
       <div className="flex justify-center items-center">
       <button 
@@ -119,7 +146,6 @@ const Home = () => {
               </tbody>    
             </table>
           </div>
-
 
           <div className="flex py-10 justify-center items-center ">
           <button 
