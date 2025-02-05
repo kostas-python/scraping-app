@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { saveAs } from "file-saver";
 
 // Define the company data structure
@@ -54,11 +54,12 @@ const Home = () => {
     fetchCompanies(1, false);
   };
 
-  const handleNextPage = () => {
+  // Wrap the handleNextPage function with useCallback to prevent unnecessary re-renders
+  const handleNextPage = useCallback(() => {
     if (!loading && hasMore) {
       fetchCompanies(page + 1, true);
     }
-  };
+  }, [loading, hasMore, page]);
 
   const handleReset = () => {
     // Reset all states to initial values
