@@ -7,23 +7,29 @@ puppeteer.use(StealthPlugin());
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
+        const { url } = req.query;  // Get the URL from the query parameters
+    
+        if (!url || typeof url !== "string") {
+          return res.status(400).json({
+            success: false,
+            error: "A valid URL is required.",
+          });
+        }
+    
         console.log("Launching Puppeteer...");
-
+    
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
-
-        // URL is predefined (or you can extract it from the request)
-        const url = `https://www.eop.gr/search/company?keyword=%CE%A5%CE%94%CE%A1%CE%91%CE%A5%CE%9B%CE%99%CE%9A%CE%9F%CE%99&region=%CF%80%CE%B1%CF%84%CF%81%CE%B1&term_id=11082&parent_region=`;
-
+    
         console.log("Scraping URL:", url);
-
+    
         await page.goto(url, { waitUntil: "domcontentloaded" });
-
+    
         // Screenshot for debugging
         await page.screenshot({ path: 'screenshot.png' });
-
+    
         // Wait for the selector to appear with increased timeout
-        await page.waitForSelector("article.row", { timeout: 60000 });
+        await page.waitForSelector(".company--details", { timeout: 60000 });
 
         // Scrape the company data
         const companies = await page.$$eval("article.row", (articles) =>
