@@ -82,7 +82,7 @@ const handleScrape = () => {
     const rows = companies.map(company => `${company.companyName},${company.address},${company.phones},${company.email},${company.website}`).join("\n");
     const csvContent = header + rows;
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, "companies.csv");
+    saveAs(blob, "odontiatroiPatra.csv");
   };
 
   return (
